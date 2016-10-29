@@ -5,3 +5,7 @@
 ### Programação em Dispositivos Móveis 2016/2017
 
 ### LI51N . G9 . *João Trindade*
+
+André
+André
+Nuno
