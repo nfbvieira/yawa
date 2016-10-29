@@ -107,8 +107,9 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    //classe a ser movida para a classe Utils
     //taken from StackOverflow
-    private class DownloadImageTask(private var bmImage: ImageView) :AsyncTask<String, Void, Bitmap>() {
+    public class DownloadImageTask(private var bmImage: ImageView) :AsyncTask<String, Void, Bitmap>() {
         override fun doInBackground(vararg urls: String?): Bitmap {
             val urldisplay = urls[0]
             var mIcon: Bitmap? = null
