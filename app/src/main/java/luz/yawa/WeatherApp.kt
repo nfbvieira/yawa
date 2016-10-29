@@ -9,6 +9,7 @@ class WeatherApp : Application(){
 
     override fun onCreate(){
         super.onCreate()
+        //create
     }
 
     val Application.requestQueue : RequestQueue
