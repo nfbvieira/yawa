@@ -2,6 +2,10 @@
 
 # **PDM @ISEL**
 
-### ProgramaÁ„o em Dispositivos MÛveis 2016/2017
+### Programa√ß√£o em Dispositivos M√≥veis 2016/2017
 
-### LI51N . G9 . *Jo„o Trindade*
+### LI51N . G9 . *Jo√£o Trindade*
+
+Andr√© Luz
+Andr√© Policarpo
+Nuno Vieira
