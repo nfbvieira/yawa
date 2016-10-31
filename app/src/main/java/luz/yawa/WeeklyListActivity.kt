@@ -1,6 +1,5 @@
 package luz.yawa
 
-import android.R
 import android.app.ListActivity
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -24,26 +23,27 @@ class WeeklyListActivity : ListActivity() {
     private val ICON_URL = "http://openweathermap.org/img/w/"
     private val ICON_EXTENSION = ".png"
     private var list : List<Map<String, Any>>? = null
-    private var lang_URI = "&lang="
+    private var LANG_URI = "&lang="
+    private var TEMP_UNIT = "&units="
 
     data class WeatherInfo(val icon:String, val description :String,
                            val curr_temp :Double, val max_temp :Double, val min_temp :Double)
 
-    class WeatherDaysHolder(/*val iconView :ImageView,*/ val descView :TextView,
+    class WeatherDaysHolder(val iconView :ImageView, val descView :TextView,
                             val currTempView :TextView, val maxTempView :TextView, val minTempView :TextView)
 
     private var theDaysInfo :Array<WeatherInfo>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        setContentView(R.layout.activity_weekly_list)
         //adicionar a uma classe Utils
         operator fun JSONArray.iterator() =
                 (0 until length()).asSequence().map { idx -> get(idx) as JSONObject }.iterator()
 
         (application as WeatherApp).requestQueue.add(
                 JsonObjectRequest(
-                        URI + KEY + lang_URI + Locale.getDefault().language,
+                        URI + KEY + LANG_URI + Locale.getDefault().language + TEMP_UNIT + "metric",
                         null,
                         {
                             val days_list = it.get("list") as JSONArray
@@ -57,13 +57,13 @@ class WeeklyListActivity : ListActivity() {
 
                             theDaysInfo = days_info
 
-                            val list_layout = R.layout.simple_list_item_2
+                            val list_layout = R.layout.list_day_info
                             val inflater = LayoutInflater.from(this)
                             val adapter = object : ArrayAdapter<WeatherInfo>(this, list_layout, days_info){
                                 override fun getView(position: Int, convertView :View?, parent : ViewGroup?) : View {
                                     val item_view = convertView ?:
                                             inflater.inflate(list_layout, parent, false)
-                                                    .withTag({
+                                                    /*.withTag({
                                                         WeatherDaysHolder(
                                                                 //it.findViewById(R.id.icon1) as ImageView,
                                                                 it.findViewById(R.id.text1) as TextView,
@@ -71,24 +71,22 @@ class WeeklyListActivity : ListActivity() {
                                                                 it.findViewById(R.id.text1) as TextView,
                                                                 it.findViewById(R.id.text1) as TextView
                                                         )
-                                                    })
-                                    /*var item_view = convertView ?: inflater.inflate(list_layout, parent, false)
-                                    item_view.tag = { WeatherDaysHolder(
-                                            item_view.findViewById(R.id.icon1) as ImageView,
-                                            item_view.findViewById(R.id.text1) as TextView,
-                                            item_view.findViewById(R.id.text1) as TextView,
-                                            item_view.findViewById(R.id.text1) as TextView,
-                                            item_view.findViewById(R.id.text2) as TextView
-                                    )}*/
+                                                    })*/
 
-                                    var view_holder = item_view.tag as WeatherDaysHolder
+                                    var view_holder = WeatherDaysHolder(
+                                            item_view.findViewById(R.id.list_weather_icon) as ImageView,
+                                            item_view.findViewById(R.id.list_weather_info) as TextView,
+                                            item_view.findViewById(R.id.list_curr_temp) as TextView,
+                                            item_view.findViewById(R.id.list_max_temp) as TextView,
+                                            item_view.findViewById(R.id.list_min_temp) as TextView
+                                    )
                                     val day_weather = days_info[position]
 
                                     val d_format : DecimalFormat = DecimalFormat("#")
                                     d_format.isDecimalSeparatorAlwaysShown = false
 
-                                    //MainActivity.DownloadImageTask(view_holder.iconView)
-                                    //        .execute(ICON_URL + day_weather.icon + ICON_EXTENSION)
+                                    MainActivity.DownloadImageTask(view_holder.iconView)
+                                            .execute(ICON_URL + day_weather.icon + ICON_EXTENSION)
                                     view_holder.descView.text = day_weather.description
                                     view_holder.currTempView.text = d_format.format(day_weather.curr_temp ) + "º"
                                     view_holder.maxTempView.text = d_format.format(day_weather.max_temp) + "º"
