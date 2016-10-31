@@ -35,7 +35,8 @@ class MainActivity : AppCompatActivity() {
     private val ICON_URL = "http://openweathermap.org/img/w/"
     private val ICON_EXTENSION = ".png"
     private var list : List<Map<String, Any>>? = null
-    private var lang_URI = "&lang="
+    private var LANG_URI = "&lang="
+    private var TEMP_UNIT_URI = "&units="
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         val minTemp = findViewById(R.id.min_temp) as TextView
         (application as WeatherApp).requestQueue.add(
             JsonObjectRequest(
-                    URI + KEY + lang_URI + Locale.getDefault().language,
+                    URI + KEY + LANG_URI + Locale.getDefault().language + TEMP_UNIT_URI + "metric",
                     null,
                     {
                         val city = it.get("name") as String
@@ -70,9 +71,9 @@ class MainActivity : AppCompatActivity() {
                         val weatherMain = it.get("main") as JSONObject
                         val d_format :DecimalFormat = DecimalFormat("#")
                         d_format.isDecimalSeparatorAlwaysShown = false
-                        currentTemp.text = d_format.format(kelvinToCelsius(weatherMain.get("temp") as Double)) + "º"
-                        maxTemp.text = d_format.format(kelvinToCelsius(weatherMain.get("temp_min") as Double)) + "º"
-                        minTemp.text = d_format.format(kelvinToCelsius(weatherMain.get("temp_max") as Double)) + "º"
+                        currentTemp.text = d_format.format(weatherMain.get("temp") as Double) + "º"
+                        maxTemp.text = d_format.format(weatherMain.get("temp_min") as Double) + "º"
+                        minTemp.text = d_format.format(weatherMain.get("temp_max") as Double) + "º"
                     },
                     {
                         Toast.makeText(this, "Failure", Toast.LENGTH_LONG).show()
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
         val nextDays = findViewById(R.id.days_info_button) as Button
         nextDays.setOnClickListener {
-            var intent: Intent = Intent(this, WeeklyListActivity::class.java)
+            val intent: Intent = Intent(this, WeeklyListActivity::class.java)
             startActivity(intent)
         }
     }
@@ -125,9 +126,5 @@ class MainActivity : AppCompatActivity() {
         override fun onPostExecute(result: Bitmap){
             bmImage.setImageBitmap(result)
         }
-    }
-
-    private fun kelvinToCelsius(temp: Double) :Double{
-        return temp - 273.15
     }
 }
