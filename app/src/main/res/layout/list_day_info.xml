@@ -39,19 +39,14 @@ tools:context="luz.yawa.WeeklyListActivity">
         android:layout_weight="1">
 
         <TextView
-            android:id="@+id/list_curr_temp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textSize="25sp"
-            android:hint="@string/empty_value"/>
-        <TextView
             android:id="@+id/list_max_temp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:textSize="25sp"
+            android:textColor="@android:color/holo_red_light"
             android:hint="@string/empty_value"/>
         <TextView
             android:id="@+id/list_min_temp"
@@ -60,6 +55,8 @@ tools:context="luz.yawa.WeeklyListActivity">
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
+            android:textSize="25sp"
+            android:textColor="@android:color/holo_blue_light"
             android:hint="@string/empty_value"/>
     </RelativeLayout>
 </LinearLayout>

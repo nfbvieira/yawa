@@ -85,6 +85,7 @@
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
+                        android:textColor="@android:color/holo_red_light"
                         android:hint="@string/empty_value"/>
                     <TextView
                         android:id="@+id/min_temp"
@@ -93,6 +94,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentBottom="true"
+                        android:textColor="@android:color/holo_blue_light"
                         android:hint="@string/empty_value"/>
                 </RelativeLayout>
             </LinearLayout>

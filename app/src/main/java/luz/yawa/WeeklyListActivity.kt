@@ -27,10 +27,10 @@ class WeeklyListActivity : ListActivity() {
     private var TEMP_UNIT = "&units="
 
     data class WeatherInfo(val icon:String, val description :String,
-                           val curr_temp :Double, val max_temp :Double, val min_temp :Double)
+                           val max_temp :Double, val min_temp :Double)
 
     class WeatherDaysHolder(val iconView :ImageView, val descView :TextView,
-                            val currTempView :TextView, val maxTempView :TextView, val minTempView :TextView)
+                            val maxTempView :TextView, val minTempView :TextView)
 
     private var theDaysInfo :Array<WeatherInfo>? = null
 
@@ -50,9 +50,8 @@ class WeeklyListActivity : ListActivity() {
                             val days_info = days_list.iterator().asSequence().map {
                                 WeatherInfo((it.get("weather") as JSONArray).getJSONObject(0).get("icon") as String,
                                         (it.get("weather") as JSONArray).getJSONObject(0).get("description") as String,
-                                        (it.get("main") as JSONObject).get("temp") as Double,
-                                        (it.get("main") as JSONObject).get("temp_min") as Double,
-                                        (it.get("main") as JSONObject).get("temp_max") as Double)
+                                        (it.get("main") as JSONObject).get("temp_max") as Double,
+                                        (it.get("main") as JSONObject).get("temp_min") as Double)
                             }.toList().toTypedArray()
 
                             theDaysInfo = days_info
@@ -76,7 +75,6 @@ class WeeklyListActivity : ListActivity() {
                                     var view_holder = WeatherDaysHolder(
                                             item_view.findViewById(R.id.list_weather_icon) as ImageView,
                                             item_view.findViewById(R.id.list_weather_info) as TextView,
-                                            item_view.findViewById(R.id.list_curr_temp) as TextView,
                                             item_view.findViewById(R.id.list_max_temp) as TextView,
                                             item_view.findViewById(R.id.list_min_temp) as TextView
                                     )
@@ -88,7 +86,6 @@ class WeeklyListActivity : ListActivity() {
                                     MainActivity.DownloadImageTask(view_holder.iconView)
                                             .execute(ICON_URL + day_weather.icon + ICON_EXTENSION)
                                     view_holder.descView.text = day_weather.description
-                                    view_holder.currTempView.text = d_format.format(day_weather.curr_temp ) + "º"
                                     view_holder.maxTempView.text = d_format.format(day_weather.max_temp) + "º"
                                     view_holder.minTempView.text = d_format.format(day_weather.min_temp) + "º"
 

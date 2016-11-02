@@ -72,8 +72,8 @@ class MainActivity : AppCompatActivity() {
                         val d_format :DecimalFormat = DecimalFormat("#")
                         d_format.isDecimalSeparatorAlwaysShown = false
                         currentTemp.text = d_format.format(weatherMain.get("temp") as Double) + "º"
-                        maxTemp.text = d_format.format(weatherMain.get("temp_min") as Double) + "º"
-                        minTemp.text = d_format.format(weatherMain.get("temp_max") as Double) + "º"
+                        maxTemp.text = d_format.format(weatherMain.get("temp_max") as Int) + "º"    //was changed to Int in API
+                        minTemp.text = d_format.format(weatherMain.get("temp_min") as Int) + "º"    //was changed to Int in API
                     },
                     {
                         Toast.makeText(this, "Failure", Toast.LENGTH_LONG).show()
