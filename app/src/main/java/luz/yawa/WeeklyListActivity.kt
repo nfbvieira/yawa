@@ -83,8 +83,8 @@ class WeeklyListActivity : ListActivity() {
                                     val d_format : DecimalFormat = DecimalFormat("#")
                                     d_format.isDecimalSeparatorAlwaysShown = false
 
-                                    MainActivity.DownloadImageTask(view_holder.iconView)
-                                            .execute(ICON_URL + day_weather.icon + ICON_EXTENSION)
+                                    /*MainActivity.DownloadImageTask(view_holder.iconView)
+                                            .execute(ICON_URL + day_weather.icon + ICON_EXTENSION)*/
                                     view_holder.descView.text = day_weather.description
                                     view_holder.maxTempView.text = d_format.format(day_weather.max_temp) + "º"
                                     view_holder.minTempView.text = d_format.format(day_weather.min_temp) + "º"

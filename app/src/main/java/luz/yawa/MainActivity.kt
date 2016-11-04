@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.text.format.DateUtils
 import android.util.Log
 import android.view.View
 import android.view.Menu
@@ -47,7 +48,8 @@ class MainActivity : AppCompatActivity() {
     val max_temp_view by lazy {findViewById(R.id.max_temp) as TextView}
     val min_temp_view by lazy {findViewById(R.id.min_temp) as TextView}
 
-    //var last_modified: Date? = null
+    var last_modified: Date? = null
+    var image_icon: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,52 +57,25 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
 
-        if(savedInstanceState == null) {
+        city_view.text = savedInstanceState?.getString("city_name")
+        weather_info_view.text = savedInstanceState?.getString("description")
+        current_temp_view.text = savedInstanceState?.getString("temp")
+        max_temp_view.text = savedInstanceState?.getString("temp_max")
+        min_temp_view.text = savedInstanceState?.getString("temp_min")
+        image_icon = savedInstanceState?.getParcelable("image_icon")
+        weather_icon_view.setImageBitmap(if(image_icon!= null) image_icon else null)
+        last_modified = savedInstanceState?.getSerializable("last_modified") as? Date
 
-            var image: Bitmap? = null
-            (application as WeatherApp).requestQueue.add(
-                    JsonObjectRequest(
-                            URI + KEY + LANG_URI + Locale.getDefault().language + TEMP_UNIT_URI + "metric",
-                            null,
-                            {
-                                val city = it.get("name") as String
-                                city_view.text = city
+        val time_to_compare = GregorianCalendar()
+        if(last_modified != null){
+            time_to_compare.time = last_modified
+            time_to_compare.add(GregorianCalendar.HOUR, 1)
+        }
 
-                                val weatherArray = it.get("weather") as JSONArray
-                                val weather = weatherArray.getJSONObject(0)
-                                var icon = weather.get("icon") as String
-                                //var image_loader = DownloadImageTask(weather_icon_view).execute(ICON_URL + icon + ICON_EXTENSION)
-                                //image = image_loader.get()
-                                (application as WeatherApp).requestQueue.add(
-                                        ImageRequest(
-                                                ICON_URL + icon + ICON_EXTENSION,
-                                                {
-                                                    weather_icon_view.setImageBitmap(it)
-                                                },
-                                                0,
-                                                0,
-                                                null,
-                                                null,
-                                                {
-                                                    Toast.makeText(this, "Failure to load icon", Toast.LENGTH_LONG).show()
-                                                }
-                                        )
-                                )
+        if(savedInstanceState == null || last_modified == null || time_to_compare.time < GregorianCalendar().time)  {
 
-                                weather_info_view.text = weather.get("description") as String
+            apiCall()
 
-                                val weatherMain = it.get("main") as JSONObject
-                                val d_format: DecimalFormat = DecimalFormat("#")
-                                d_format.isDecimalSeparatorAlwaysShown = false
-                                current_temp_view.text = d_format.format(weatherMain.get("temp") as Double) + "º"
-                                max_temp_view.text = d_format.format(weatherMain.get("temp_max") as Int) + "º"    //was changed to Int in API
-                                min_temp_view.text = d_format.format(weatherMain.get("temp_min") as Int) + "º"    //was changed to Int in API
-                            },
-                            {
-                                Toast.makeText(this, "Failure", Toast.LENGTH_LONG).show()
-                            }
-                    )
-            )
         }
         val nextDays = findViewById(R.id.days_info_button) as Button
         nextDays.setOnClickListener {
@@ -135,35 +110,55 @@ class MainActivity : AppCompatActivity() {
         outState?.putString("temp", current_temp_view.text as String)
         outState?.putString("temp_max", max_temp_view.text as String)
         outState?.putString("temp_min", min_temp_view.text as String)
+        outState?.putParcelable("image_icon", image_icon)
+        outState?.putSerializable("last_modified", last_modified as Date)
         super.onSaveInstanceState(outState)
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?){
-        super.onRestoreInstanceState(savedInstanceState)
-        city_view.text = savedInstanceState?.getString("city_name")
-        weather_info_view.text = savedInstanceState?.getString("description")
-        current_temp_view.text = savedInstanceState?.getString("temp")
-        max_temp_view.text = savedInstanceState?.getString("temp_max")
-        min_temp_view.text = savedInstanceState?.getString("temp_min")
-    }
+    private fun apiCall(/*callback: myDateCallback*/){
+        (application as WeatherApp).requestQueue.add(
+                JsonObjectRequest(
+                        URI + KEY + LANG_URI + Locale.getDefault().language + TEMP_UNIT_URI + "metric",
+                        null,
+                        {
+                            val city = it.get("name") as String
+                            city_view.text = city
 
-    //classe a ser movida para a classe Utils
-    //taken from StackOverflow
-    public class DownloadImageTask(var bmImage: ImageView) :AsyncTask<String, Void, Bitmap>() {
-        override fun doInBackground(vararg urls: String?): Bitmap {
-            val urldisplay = urls[0]
-            var mIcon: Bitmap? = null
-            try{
-                mIcon = BitmapFactory.decodeStream(URL(urldisplay).openStream())!!
-            } catch (e: Exception){
-                Log.e("Error", e.message)
-            }
-            if(mIcon == null) throw NullPointerException()
-            return mIcon
-        }
+                            val weatherArray = it.get("weather") as JSONArray
+                            val weather = weatherArray.getJSONObject(0)
+                            val icon = weather.get("icon") as String
+                            (application as WeatherApp).requestQueue.add(
+                                    ImageRequest(
+                                            ICON_URL + icon + ICON_EXTENSION,
+                                            {
+                                                image_icon = it
+                                                weather_icon_view.setImageBitmap(it)
+                                            },
+                                            0,
+                                            0,
+                                            null,
+                                            null,
+                                            {
+                                                Toast.makeText(this, "Failure to load icon", Toast.LENGTH_LONG).show()
+                                            }
+                                    )
+                            )
 
-        override fun onPostExecute(result: Bitmap){
-            bmImage.setImageBitmap(result)
-        }
+                            weather_info_view.text = weather.get("description") as String
+
+                            val weatherMain = it.get("main") as JSONObject
+                            val d_format: DecimalFormat = DecimalFormat("#")
+                            d_format.isDecimalSeparatorAlwaysShown = false
+                            current_temp_view.text = d_format.format(weatherMain.get("temp") as Double) + "º"
+                            max_temp_view.text = d_format.format(weatherMain.get("temp_max") as Int) + "º"    //was changed to Int in API
+                            min_temp_view.text = d_format.format(weatherMain.get("temp_min") as Int) + "º"    //was changed to Int in API
+
+                            last_modified = GregorianCalendar().time
+                        },
+                        {
+                            Toast.makeText(this, "Failure", Toast.LENGTH_LONG).show()
+                        }
+                )
+        )
     }
 }
