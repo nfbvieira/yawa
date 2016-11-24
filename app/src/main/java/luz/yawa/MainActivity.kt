@@ -67,10 +67,15 @@ class MainActivity : AppCompatActivity() {
         last_modified = savedInstanceState?.getSerializable("last_modified") as? Date
 
         val time_to_compare = GregorianCalendar()
+        //var timer = GregorianCalendar().timeInMillis
         if(last_modified != null){
             time_to_compare.time = last_modified
             time_to_compare.add(GregorianCalendar.HOUR, 1)
         }
+        var timer = GregorianCalendar()
+        timer.timeInMillis = 1480006800 * 1000L
+        Log.i("/main", last_modified.toString())
+        Log.i("/main", timer.time.toString())
 
         if(savedInstanceState == null || last_modified == null || time_to_compare.time < GregorianCalendar().time)  {
 
