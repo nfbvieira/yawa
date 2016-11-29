@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
             time_to_compare.time = last_modified
             time_to_compare.add(GregorianCalendar.HOUR, 1)
         }
-        var timer = GregorianCalendar()
+        val timer = GregorianCalendar()
         timer.timeInMillis = 1480006800 * 1000L
         Log.i("/main", last_modified.toString())
         Log.i("/main", timer.time.toString())
@@ -86,6 +86,10 @@ class MainActivity : AppCompatActivity() {
         nextDays.setOnClickListener {
             val intent: Intent = Intent(this, WeeklyListActivity::class.java)
             startActivity(intent)
+        }
+        val refresh = findViewById(R.id.refresh_button) as Button
+        refresh.setOnClickListener {
+            apiCall()
         }
     }
 
@@ -158,7 +162,9 @@ class MainActivity : AppCompatActivity() {
                             max_temp_view.text = d_format.format(weatherMain.get("temp_max") as Int) + "º"    //was changed to Int in API
                             min_temp_view.text = d_format.format(weatherMain.get("temp_min") as Int) + "º"    //was changed to Int in API
 
+                            Log.i("before", last_modified.toString())
                             last_modified = GregorianCalendar().time
+                            Log.i("after", last_modified.toString())
                         },
                         {
                             Toast.makeText(this, "Failure", Toast.LENGTH_LONG).show()

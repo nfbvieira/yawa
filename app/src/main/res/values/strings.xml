@@ -2,5 +2,6 @@
     <string name="app_name">YAWA</string>
     <string name="action_settings">Settings</string>
     <string name="empty_value">None</string>
-    <string name="days_info_button">Weather info for the next 7 days</string>
+    <string name="days_info_button">Weather info for the next days</string>
+    <string name="refresh_button">Refresh</string>
 </resources>
