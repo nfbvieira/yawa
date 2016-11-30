@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.android.volley.toolbox.ImageRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import org.json.JSONArray
 import org.json.JSONObject
@@ -42,7 +43,7 @@ class WeeklyListActivity : ListActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weekly_list)
 
-        //adicionar a uma classe Utils
+        //TODO adicionar a uma classe Utils
         operator fun JSONArray.iterator() =
                 (0 until length()).asSequence().map { idx -> get(idx) as JSONObject }.iterator()
 
@@ -137,8 +138,21 @@ class WeeklyListActivity : ListActivity() {
                                     val d_format : DecimalFormat = DecimalFormat("#")
                                     d_format.isDecimalSeparatorAlwaysShown = false
 
-                                    /*MainActivity.DownloadImageTask(view_holder.iconView)
-                                            .execute(ICON_URL + day_weather.icon + ICON_EXTENSION)*/
+                                    (application as WeatherApp).requestQueue.add(
+                                            ImageRequest(
+                                                    ICON_URL + day_weather.icon + ICON_EXTENSION,
+                                                    {
+                                                        view_holder.iconView.setImageBitmap(it)
+                                                    },
+                                                    0,
+                                                    0,
+                                                    null,
+                                                    null,
+                                                    {
+                                                        Toast.makeText(this.context, "Failure to load icon", Toast.LENGTH_LONG).show()
+                                                    }
+                                            )
+                                    )
                                     view_holder.descView.text = day_weather.description
                                     view_holder.maxTempView.text = d_format.format(day_weather.max_temp) + "º"
                                     view_holder.minTempView.text = d_format.format(day_weather.min_temp) + "º"
